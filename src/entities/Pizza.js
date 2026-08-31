@@ -2,28 +2,106 @@
 const db = require('../config/database');
 
 class Pizza {
-    static create({ name, imageUrl, price }) {
-        const sql = `INSERT INTO pizzas (name, imageUrl, price, created_at, updated_at)
-                 VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))`;
-        const params = [name, imageUrl || null, price];
+    static async create({ name, imageUrl, price, ingredients = [] }) {
+        // Create pizza
+        const pizzaId = await new Promise((resolve, reject) => {
+            const sql = `
+            INSERT INTO pizzas
+            (name, imageUrl, price, created_at, updated_at)
+            VALUES (?, ?, ?, datetime('now'), datetime('now'))
+        `;
 
-        return new Promise((resolve, reject) => {
-            db.run(sql, params, function (err) {
+            db.run(sql, [name, imageUrl || null, price], function (err) {
                 if (err) return reject(err);
-                // fetch created row
-                Pizza.findById(this.lastID).then(resolve).catch(reject);
+                resolve(this.lastID);
             });
         });
+
+        // Create ingredients and relations
+        for (const ingredientName of ingredients) {
+
+            // Check if ingredient already exists
+            let ingredient = await new Promise((resolve, reject) => {
+                db.get(
+                    `SELECT * FROM ingredients WHERE name = ?`,
+                    [ingredientName],
+                    (err, row) => {
+                        if (err) return reject(err);
+                        resolve(row);
+                    }
+                );
+            });
+
+            let ingredientId;
+
+            if (ingredient) {
+                ingredientId = ingredient.id;
+            } else {
+                // Create ingredient
+                ingredientId = await new Promise((resolve, reject) => {
+                    const sql = `
+                    INSERT INTO ingredients
+                    (name, price, created_at, updated_at)
+                    VALUES (?, ?, datetime('now'), datetime('now'))
+                `;
+
+                    db.run(sql, [ingredientName, 1], function (err) {
+                        if (err) return reject(err);
+                        resolve(this.lastID);
+                    });
+                });
+            }
+
+            // Link pizza ↔ ingredient
+            await new Promise((resolve, reject) => {
+                const sql = `
+                INSERT INTO pizzas_has_ingredients
+                (pizza_id, ingredient_id, created_at, updated_at)
+                VALUES (?, ?, datetime('now'), datetime('now'))
+            `;
+
+                db.run(sql, [pizzaId, ingredientId], function (err) {
+                    if (err) return reject(err);
+                    resolve();
+                });
+            });
+        }
+
+        return Pizza.findById(pizzaId);
     }
 
-    static findAll() {
-        const sql = `SELECT * FROM pizzas ORDER BY id DESC`;
-        return new Promise((resolve, reject) => {
-            db.all(sql, [], (err, rows) => {
-                if (err) return reject(err);
-                resolve(rows);
-            });
+    static async findAll() {
+        const pizzas = await new Promise((resolve, reject) => {
+            db.all(
+                `SELECT * FROM pizzas ORDER BY id DESC`,
+                [],
+                (err, rows) => {
+                    if (err) return reject(err);
+                    resolve(rows);
+                }
+            );
         });
+
+        for (const pizza of pizzas) {
+            pizza.ingredients = await new Promise((resolve, reject) => {
+                db.all(
+                    `
+                SELECT i.*
+                FROM ingredients i
+                INNER JOIN pizzas_has_ingredients phi
+                    ON phi.ingredient_id = i.id
+                WHERE phi.pizza_id = ?
+                `,
+                    [pizza.id],
+                    (err, rows) => {
+                        if (err) return reject(err);
+                        resolve(rows);
+                    }
+                );
+            });
+        }
+
+        return pizzas;
     }
 
     static findById(id) {
