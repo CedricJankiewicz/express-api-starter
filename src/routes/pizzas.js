@@ -1,7 +1,7 @@
-// routes/products.js
+// routes/pizzas.js
 const express = require('express');
 const { body, param } = require('express-validator');
-const productController = require('../controllers/productController');
+const productController = require('../controllers/pizzaController');
 
 const router = express.Router();
 
