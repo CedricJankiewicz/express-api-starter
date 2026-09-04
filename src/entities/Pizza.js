@@ -86,16 +86,17 @@ class Pizza {
             pizza.ingredients = await new Promise((resolve, reject) => {
                 db.all(
                     `
-                SELECT i.*
-                FROM ingredients i
-                INNER JOIN pizzas_has_ingredients phi
-                    ON phi.ingredient_id = i.id
-                WHERE phi.pizza_id = ?
-                `,
+                        SELECT i.name
+                        FROM ingredients i
+                                 INNER JOIN pizzas_has_ingredients phi
+                                            ON phi.ingredient_id = i.id
+                        WHERE phi.pizza_id = ?
+                    `,
                     [pizza.id],
                     (err, rows) => {
                         if (err) return reject(err);
-                        resolve(rows);
+
+                        resolve(rows.map(row => row.name));
                     }
                 );
             });

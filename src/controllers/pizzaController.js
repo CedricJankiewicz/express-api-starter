@@ -16,8 +16,8 @@ exports.create = async (req, res, next) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { name, imageUrl, price } = req.body;
-        const created = await Pizza.create({ name, imageUrl, price });
+        const { name, imageUrl, price, ingredients } = req.body;
+        const created = await Pizza.create({ name, imageUrl, price, ingredients });
         // 201 Created
         return res.status(201).json(created);
     } catch (err) {
