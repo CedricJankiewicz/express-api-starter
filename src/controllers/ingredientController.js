@@ -1,6 +1,6 @@
 // controllers/ingredientController.js
 const { validationResult } = require('express-validator');
-const Ingredient = require('../entities/Ingredients');
+const Ingredient = require('../entities/Ingredient');
 
 /**
  * Controller functions use Express (req, res) signatures and

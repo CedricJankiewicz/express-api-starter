@@ -1,7 +1,7 @@
-// entities/Ingredients.js
+// entities/Ingredient.js
 const db = require('../config/database');
 
-class Ingredients {
+class Ingredient {
     static create({ name, price }) {
         const sql = `INSERT INTO ingredients (name, price, created_at, updated_at)
                  VALUES (?, ?, datetime('now'), datetime('now'))`;
@@ -11,7 +11,7 @@ class Ingredients {
             db.run(sql, params, function (err) {
                 if (err) return reject(err);
                 // fetch created row
-                Ingredients.findById(this.lastID).then(resolve).catch(reject);
+                Ingredient.findById(this.lastID).then(resolve).catch(reject);
             });
         });
     }
@@ -38,7 +38,7 @@ class Ingredients {
 
     static update(id, { name, price }) {
         const sql = `
-      UPDATE ingredients
+      UPDATE ingredient
       SET name = COALESCE(?, name),
           price = COALESCE(?, price),
           updated_at = datetime('now')
@@ -50,7 +50,7 @@ class Ingredients {
             db.run(sql, params, function (err) {
                 if (err) return reject(err);
                 if (this.changes === 0) return resolve(null);
-                Ingredients.findById(id).then(resolve).catch(reject);
+                Ingredient.findById(id).then(resolve).catch(reject);
             });
         });
     }
@@ -66,4 +66,4 @@ class Ingredients {
     }
 }
 
-module.exports = Ingredients;
+module.exports = Ingredient;
