@@ -9,12 +9,38 @@ const router = express.Router();
  * @openapi
  * /api/products:
  *   get:
- *     summary: Retrieve a list of products
+ *     summary: Retrieve a list of pizzas
+ *     tags:
+ *       - Pizzas
  *     responses:
  *       200:
- *         description: A list of products
+ *         description: A list of pizzas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   name:
+ *                     type: string
+ *                     example: Margherita
+ *                   imageUrl:
+ *                     type: string
+ *                     format: uri
+ *                     example: https://example.com/images/margherita.jpg
+ *                   price:
+ *                     type: number
+ *                     format: float
+ *                     example: 12.50
+ *
  *   post:
- *     summary: Create a new product
+ *     summary: Create a new pizza
+ *     tags:
+ *       - Pizzas
  *     requestBody:
  *       required: true
  *       content:
@@ -27,15 +53,23 @@ const router = express.Router();
  *             properties:
  *               name:
  *                 type: string
- *               description:
- *                 type: string
+ *                 minLength: 1
+ *                 description: Name of the pizza
+ *                 example: Margherita
  *               imageUrl:
  *                 type: string
+ *                 format: uri
+ *                 description: URL of the pizza image
+ *                 example: https://example.com/images/margherita.jpg
  *               price:
  *                 type: number
+ *                 format: float
+ *                 exclusiveMinimum: 0
+ *                 description: Price of the pizza
+ *                 example: 12.50
  *     responses:
  *       201:
- *         description: Product created
+ *         description: Pizza created
  *       400:
  *         description: Invalid input
  */
@@ -44,61 +78,109 @@ const router = express.Router();
  * @openapi
  * /api/products/{id}:
  *   get:
- *     summary: Get a product by ID
+ *     summary: Get a pizza by ID
+ *     tags:
+ *       - Pizzas
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID of the pizza
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       200:
- *         description: A single product
+ *         description: A single pizza
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                   example: 1
+ *                 name:
+ *                   type: string
+ *                   example: Margherita
+ *                 imageUrl:
+ *                   type: string
+ *                   format: uri
+ *                   example: https://example.com/images/margherita.jpg
+ *                 price:
+ *                   type: number
+ *                   format: float
+ *                   example: 12.50
+ *       400:
+ *         description: Invalid ID
  *       404:
- *         description: Product not found
+ *         description: Pizza not found
+ *
  *   put:
- *     summary: Update a product by ID
+ *     summary: Update a pizza by ID
+ *     tags:
+ *       - Pizzas
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID of the pizza
  *         schema:
  *           type: integer
+ *           example: 1
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - price
  *             properties:
  *               name:
  *                 type: string
- *               description:
- *                 type: string
+ *                 minLength: 1
+ *                 description: Name of the pizza
+ *                 example: Margherita
  *               imageUrl:
  *                 type: string
+ *                 format: uri
+ *                 description: URL of the pizza image
+ *                 example: https://example.com/images/margherita.jpg
  *               price:
  *                 type: number
+ *                 format: float
+ *                 exclusiveMinimum: 0
+ *                 description: Price of the pizza
+ *                 example: 12.50
  *     responses:
  *       200:
- *         description: Product updated
+ *         description: Pizza updated
  *       400:
  *         description: Invalid input
  *       404:
- *         description: Product not found
+ *         description: Pizza not found
+ *
  *   delete:
- *     summary: Delete a product by ID
+ *     summary: Delete a pizza by ID
+ *     tags:
+ *       - Pizzas
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         description: ID of the pizza
  *         schema:
  *           type: integer
+ *           example: 1
  *     responses:
  *       204:
- *         description: Product deleted
+ *         description: Pizza deleted
+ *       400:
+ *         description: Invalid ID
  *       404:
- *         description: Product not found
+ *         description: Pizza not found
  */
 
 /**
