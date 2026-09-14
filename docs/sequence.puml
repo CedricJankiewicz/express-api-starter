@@ -1,0 +1,40 @@
+@startuml
+title GET /pizzas - Sequence Diagram
+
+actor Client
+participant "Pizza Controller" as Controller
+participant "Pizza Model" as Pizza
+participant "Pizzas_has_Ingredients Model" as Relation
+participant "Ingredient Model" as Ingredient
+database Database as DB
+
+Client -> Controller: GET /pizzas
+activate Controller
+
+Controller -> Pizza: findAll()
+activate Pizza
+Pizza -> DB: SELECT * FROM pizzas
+DB --> Pizza: Pizza records
+Pizza --> Controller: Pizza[]
+deactivate Pizza
+
+loop For each Pizza
+    Controller -> Relation: findByPizzaId(pizza.id)
+    activate Relation
+    Relation -> DB: SELECT ingredient_id\nFROM pizzas_has_ingredients\nWHERE pizza_id = ?
+    DB --> Relation: Ingredient IDs
+    Relation --> Controller: Ingredient IDs
+    deactivate Relation
+
+    Controller -> Ingredient: findById(ingredient_id)
+    activate Ingredient
+    Ingredient -> DB: SELECT * FROM ingredients\nWHERE id = ?
+    DB --> Ingredient: Ingredient
+    Ingredient --> Controller: Ingredient
+    deactivate Ingredient
+end
+
+Controller --> Client: 200 OK + pizzas with ingredients
+deactivate Controller
+
+@enduml
