@@ -7,7 +7,7 @@ const Ingredient = require('../entities/Ingredient');
  * respond with status codes matching MDN/HTTP recommendations.
  */
 
-exports.create = async (req, res, next) => {
+/*exports.create = async (req, res, next) => {
     try {
         // validation result
         const errors = validationResult(req);
@@ -23,7 +23,7 @@ exports.create = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};
+};*/
 
 exports.findAll = async (req, res, next) => {
     try {
@@ -48,7 +48,7 @@ exports.findOne = async (req, res, next) => {
         next(err);
     }
 };
-
+/*
 exports.update = async (req, res, next) => {
     try {
         // validation result
@@ -83,4 +83,4 @@ exports.delete = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};
+};*/

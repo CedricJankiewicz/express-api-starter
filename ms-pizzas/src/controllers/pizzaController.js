@@ -1,6 +1,6 @@
 // controllers/pizzaController.js
 const { validationResult } = require('express-validator');
-const Pizza_has_Ingredient = require('../entities/Pizza_has_Ingredient');
+const Pizza = require('../entities/Pizza');
 
 /**
  * Controller functions use Express (req, res) signatures and
@@ -27,7 +27,7 @@ exports.create = async (req, res, next) => {
 */
 exports.findAll = async (req, res, next) => {
     try {
-        const pizzas = await Pizza_has_Ingredient.findAll();
+        const pizzas = await Pizza.findAll();
         // 200 OK
         return res.status(200).json(pizzas);
     } catch (err) {
@@ -40,7 +40,7 @@ exports.findOne = async (req, res, next) => {
         const id = Number(req.params.id);
         if (Number.isNaN(id)) return res.status(400).json({ error: 'Invalid pizza id' });
 
-        const pizza = await Pizza_has_Ingredient.findById(id);
+        const pizza = await Pizza.findById(id);
         if (!pizza) return res.status(404).json({ error: 'Pizza not found' }); // 404 Not Found
 
         return res.status(200).json(pizza);
@@ -83,5 +83,4 @@ exports.delete = async (req, res, next) => {
     } catch (err) {
         next(err);
     }
-};
-*/
+};*/

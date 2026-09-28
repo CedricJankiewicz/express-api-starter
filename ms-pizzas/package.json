@@ -1,0 +1,14 @@
+{
+  "name": "products-api",
+  "version": "1.0.0",
+  "description": "RESTful Products API with sqlite3, express-validator, and swagger-ui",
+  "main": "./src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

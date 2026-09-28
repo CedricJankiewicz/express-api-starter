@@ -28,24 +28,13 @@ db.serialize(() => {
     `);
 
     db.run(`
-        CREATE TABLE IF NOT EXISTS ingredients (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            price REAL NOT NULL,
-            created_at TEXT DEFAULT (datetime('now')),
-            updated_at TEXT DEFAULT (datetime('now'))
-        )
-    `);
-
-    db.run(`
-        CREATE TABLE IF NOT EXISTS pizzas_has_ingredients (
+        CREATE TABLE IF NOT EXISTS product_compositions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             pizza_id INTEGER,
             ingredient_id INTEGER,
             created_at TEXT DEFAULT (datetime('now')),
             updated_at TEXT DEFAULT (datetime('now')),
-            FOREIGN KEY (pizza_id) REFERENCES pizzas(id) ON DELETE CASCADE,
-            FOREIGN KEY (ingredient_id) REFERENCES ingredients(id) ON DELETE CASCADE
+            FOREIGN KEY (pizza_id) REFERENCES pizzas(id) ON DELETE CASCADE
         )
     `, (err) => {
         if (err) {
