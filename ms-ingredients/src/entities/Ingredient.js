@@ -2,7 +2,6 @@
 const db = require('../config/database');
 
 class Ingredient {
-    /*
     static create({ name, price }) {
         const sql = `INSERT INTO ingredients (name, price, created_at, updated_at)
                  VALUES (?, ?, datetime('now'), datetime('now'))`;
@@ -15,7 +14,7 @@ class Ingredient {
                 Ingredient.findById(this.lastID).then(resolve).catch(reject);
             });
         });
-    }*/
+    }
 
     static findAll() {
         const sql = `SELECT * FROM ingredients ORDER BY id DESC`;
@@ -36,10 +35,10 @@ class Ingredient {
             });
         });
     }
-    /*
+
     static update(id, { name, price }) {
         const sql = `
-      UPDATE ingredient
+      UPDATE ingredients
       SET name = COALESCE(?, name),
           price = COALESCE(?, price),
           updated_at = datetime('now')
@@ -64,7 +63,7 @@ class Ingredient {
                 resolve(this.changes); // number of rows deleted
             });
         });
-    }*/
+    }
 }
 
 module.exports = Ingredient;
