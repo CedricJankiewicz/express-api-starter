@@ -1,9 +1,9 @@
-// config/database.js (product-service)
+// config/database.js (pizza-service)
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 require('dotenv').config();
 
-const dbFile = process.env.DB_FILE || path.join(__dirname, '..', 'products.sqlite');
+const dbFile = process.env.DB_FILE || path.join(__dirname, '..', 'pizzas.sqlite');
 
 const db = new sqlite3.Database(dbFile, (err) => {
     if (err) {
@@ -25,16 +25,6 @@ CREATE TABLE IF NOT EXISTS pizzas (
     price REAL NOT NULL,
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now'))
-);
-
--- No real FK to productItems here (it’s managed by API validation)
-CREATE TABLE IF NOT EXISTS pizzas_has_ingredients (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    pizza_id INTEGER,
-    ingredient_id INTEGER,
-    created_at TEXT DEFAULT (datetime('now')),
-    updated_at TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY (pizza_id) REFERENCES pizzas(id) ON DELETE CASCADE
 );
 `;
 
@@ -75,46 +65,7 @@ db.serialize(() => {
 
             productStmt.finalize(() => console.log('Seed data inserted.'));
         } else {
-            console.log(`Database already contains ${row.count} products — skipping seed.`);
-        }
-    });
-
-    // Seed compositions only if empty
-    db.get('SELECT COUNT(*) AS count FROM pizzas_has_ingredients', (err, row) => {
-        if (err) {
-            console.error('Error checking pizzas_has_ingredients', err);
-            return;
-        }
-
-        if (row.count === 0) {
-            console.log('Seeding product_compositions...');
-            const stmt = db.prepare(`
-            INSERT INTO pizzas_has_ingredients (pizza_id, ingredient_id)
-            VALUES (?, ?)
-        `);
-
-            stmt.run(1, 1);
-            stmt.run(1, 2);
-            stmt.run(1, 3);
-
-            stmt.run(2, 2);
-            stmt.run(2, 4);
-            stmt.run(2, 5);
-
-            stmt.run(3, 2);
-
-            stmt.run(4, 1);
-            stmt.run(4, 3);
-            stmt.run(4, 5);
-            stmt.run(4, 6);
-            stmt.run(4, 7);
-            stmt.run(4, 8);
-
-            stmt.run(5, 2);
-            stmt.run(5, 4);
-            stmt.run(5, 5);
-
-            stmt.finalize(() => console.log('product_compositions seeded.'));
+            console.log(`Database already contains ${row.count} pizzas — skipping seed.`);
         }
     });
 });

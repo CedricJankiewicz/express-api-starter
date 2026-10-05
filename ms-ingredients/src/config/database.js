@@ -1,4 +1,4 @@
-// config/database.js (productItem-service)
+// config/database.js (ingredient-service)
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 require('dotenv').config();

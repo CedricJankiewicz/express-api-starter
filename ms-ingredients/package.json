@@ -1,5 +1,5 @@
 {
-  "name": "product-items-api",
+  "name": "ingredients",
   "version": "1.0.0",
   "description": "RESTful Products API with sqlite3, express-validator, and swagger-ui",
   "main": "server.js",

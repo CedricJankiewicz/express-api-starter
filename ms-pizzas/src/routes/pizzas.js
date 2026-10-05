@@ -1,64 +1,25 @@
 // routes/pizzas.js
 const express = require('express');
-const { body, param } = require('express-validator');
-const pizzaController = require('../controllers/pizzaController');
+const { param } = require('express-validator');
+const ingredientController = require('../controllers/pizzaController');
 
 const router = express.Router();
 
 /**
- * @swagger
- * components:
- *   schemas:
- *     ProductComposition:
- *       type: object
- *       properties:
- *         id:
- *           type: integer
- *           example: 1
- *         product_id:
- *           type: integer
- *           example: 1
- *         item_id:
- *           type: integer
- *           example: 2
- */
-
-/**
  * @openapi
- * /products:
+ * /api/v1/productitems:
  *   get:
- *     summary: Retrieve a list of products
+ *     summary: Retrieve a list of product items
  *     responses:
  *       200:
- *         description: A list of product
- *   post:
- *     summary: Create a new product
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - price
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *     responses:
- *       201:
- *         description: Product item
- *       400:
- *         description: Invalid input
+ *         description: A list of product items
  */
 
 /**
  * @openapi
- * /products/{id}:
+ * /api/v1/productitems/{id}:
  *   get:
- *     summary: Get a product by ID
+ *     summary: Get a product item by ID
  *     parameters:
  *       - in: path
  *         name: id
@@ -67,153 +28,12 @@ const router = express.Router();
  *           type: integer
  *     responses:
  *       200:
- *         description: A single product
+ *         description: A single product item
  *       404:
- *         description: Product not found
- *   put:
- *     summary: Update a product by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *     responses:
- *       200:
- *         description: Product updated
- *       400:
- *         description: Invalid input
- *       404:
- *         description: Product not found
- *   delete:
- *     summary: Delete a product by ID
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       204:
- *         description: Product deleted
- *       404:
- *         description: Product not found
+ *         description: Product item not found
  */
 
-/**
- * @openapi
- * /products/{id}/compositions:
- *   get:
- *     summary: Get all composition items for a product
- *     tags: [Compositions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: Product ID
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       '200':
- *         description: Array of product compositions
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/ProductComposition'
- *       '404':
- *         description: Product not found
- *
- *   post:
- *     summary: Add a composition item to a product
- *     tags: [Compositions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the product to which the composition is added
- *         schema:
- *           type: integer
- *           example: 1
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               item_id:
- *                 type: integer
- *                 description: The ID of the product item to associate
- *                 example: 2
- *     responses:
- *       201:
- *         description: Composition successfully added
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ProductComposition'
- *       400:
- *         description: Validation error or missing data
- *       404:
- *         description: Product or item not found
- *
- *
- *   delete:
- *     summary: Delete all composition items for a specific product
- *     tags: [Compositions]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the product whose compositions should be deleted
- *         schema:
- *           type: integer
- *           example: 1
- *     responses:
- *       204:
- *         description: All compositions successfully deleted
- *       404:
- *         description: Product or composition not found
- */
-
-/**
- * Validation rules
- */
-const createAndUpdateValidationsProduct = [
-    body('name').isString().notEmpty().withMessage('name is required'),
-    body('price').isFloat({ gt: 0 }).withMessage('price must be a positive number'),
-];
-
-const createAndUpdateValidationsCompositions = [
-    body('product_id').isString().notEmpty().withMessage('product id is required'),
-    body('item_id').isString().notEmpty().withMessage('item id is required'),
-];
-
-// ---------------- Product ----------------
-router.get('/', pizzaController.findAll);
-router.post('/', createAndUpdateValidationsProduct, pizzaController.create);
-router.get('/:id', [param('id').isInt()], pizzaController.findOne);
-router.put('/:id', [param('id').isInt(), createAndUpdateValidationsProduct], pizzaController.update);
-router.delete('/:id', [param('id').isInt()], pizzaController.delete);
-router.get('/:id/full', [param('id').isInt()], pizzaController.getProductWithItems);
-
-// ---------------- Composition ----------------
-router.get('/:id/compositions',[param('id').isInt()], pizzaController.getCompositions);
-router.post('/:id/compositions', createAndUpdateValidationsCompositions, pizzaController.addComposition);
-router.delete('/:id/compositions', [param('id').isInt()], pizzaController.deleteCompositions);
+router.get('/', ingredientController.findAll);
+router.get('/:id', [param('id').isInt().withMessage('id must be an integer')], ingredientController.findOne);
 
 module.exports = router;
